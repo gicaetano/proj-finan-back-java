@@ -1,7 +1,11 @@
 package br.com.xlcode.minhasfinancas.service.impl;
 
-import org.springframework.stereotype.Service;
+import java.util.Optional;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import br.com.xlcode.minhasfinancas.exception.ErroAutenticacao;
 import br.com.xlcode.minhasfinancas.exception.RegraNegocioException;
 import br.com.xlcode.minhasfinancas.model.entity.Usuario;
 import br.com.xlcode.minhasfinancas.model.repositories.UsuarioRepository;
@@ -18,11 +22,23 @@ public class UsuarioServiceImpl implements UsuarioService {
 	}
 
 	public Usuario autenticar(String email, String senha) {
+		Optional<Usuario> usuario = repository.findByEmail(email);
+		
+		if(!usuario.isPresent()) {
+			throw new ErroAutenticacao("Usuário não encontrado, para o e-mail informado.");
+		}
+		
+		if(usuario.get().getSenha().equals(senha)) {
+			throw new ErroAutenticacao("Senha inválida");
+		}
+		
 		return null;
 	}
 
+	@Transactional
 	public Usuario salvarUsuario(Usuario usuario) {
-		return null;
+		validarEmail(usuario.getEmail());
+		return repository.save(usuario);
 	}
 
 	public void validarEmail(String email) {
