@@ -104,7 +104,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 		}
 		
 		if(despesas == null) {
-			receitas = BigDecimal.ZERO;
+			despesas = BigDecimal.ZERO;
 		}
 		
 		return receitas.subtract(despesas);

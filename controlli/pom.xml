@@ -12,7 +12,7 @@
 	<groupId>br.com.xlcode</groupId>
 	<artifactId>controlli</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>minhasfinancas</name>
+	<name>controlli</name>
 	<description>Projeto para gerenciamento de finanças pessoais</description>
 	<properties>
 		<java.version>11</java.version>

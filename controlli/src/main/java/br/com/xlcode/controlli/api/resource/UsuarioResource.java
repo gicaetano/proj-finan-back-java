@@ -56,7 +56,7 @@ public class UsuarioResource {
 	}
 	
 	@GetMapping("{id}/saldo")
-	public ResponseEntity obterSaldo(@PathVariable("id") Long id) {
+	public ResponseEntity obterSaldo( @PathVariable("id") Long id ) {
 		Optional<Usuario> usuario = service.obterPorId(id);
 		
 		if(!usuario.isPresent()) {
