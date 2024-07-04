@@ -3,6 +3,7 @@ package br.com.xlcode.controlli.api.resource;
 import java.util.List;
 import java.util.Optional;
 
+import br.com.xlcode.controlli.api.mapper.LancamentoMapper;
 import io.swagger.annotations.Api;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +35,7 @@ public class LancamentoResource {
 
 	private final LancamentoService lancamentoService;
 	private final UsuarioService usuarioService;
+	private final LancamentoMapper lancamentoMapper;
 	
 	@GetMapping
 	public ResponseEntity buscar( 			
@@ -56,20 +58,21 @@ public class LancamentoResource {
 		}
 
 		List<Lancamento> lancamentos = lancamentoService.buscar(lancamentoFiltro);
+
 		return ResponseEntity.ok(lancamentos);
 	}
 
 	@GetMapping("{id}")
 	public ResponseEntity obterLancamento(@PathVariable("id") Long id) {
 		return lancamentoService.obterPorId(id)
-				.map( lancamento -> new ResponseEntity(converter(lancamento), HttpStatus.OK) )
+				.map( lancamento -> new ResponseEntity(lancamentoMapper.converterToDto(lancamento), HttpStatus.OK) )
 				.orElseGet( () -> new ResponseEntity(HttpStatus.NOT_FOUND));
 	}
 
 	@PostMapping
 	public ResponseEntity salvar(@RequestBody LancamentoDTO dto) {
 		try {
-			Lancamento entidade = converter(dto);
+			Lancamento entidade = lancamentoMapper.converterToEntity(dto);
 			lancamentoService.salvar(entidade);
 			return new ResponseEntity(entidade, HttpStatus.CREATED);
 		} catch(RegraNegocioException e) {
@@ -81,7 +84,7 @@ public class LancamentoResource {
 	public ResponseEntity atualizar( @PathVariable("id") Long id, @RequestBody LancamentoDTO dto ) {
 		return lancamentoService.obterPorId(id).map(entity -> {
 			try {
-				Lancamento lancamento = converter(dto);
+				Lancamento lancamento = lancamentoMapper.converterToEntity(dto);
 				lancamento.setId(entity.getId());
 				lancamentoService.atualizar(lancamento);
 				return ResponseEntity.ok(lancamento);
@@ -122,43 +125,30 @@ public class LancamentoResource {
 		new ResponseEntity("Lancamento não encontrado na base de daods.", HttpStatus.BAD_REQUEST ));
 	}
 
-	private LancamentoDTO converter(Lancamento lancamento) {
-		return LancamentoDTO.builder()
-				.id(lancamento.getId())
-				.descricao(lancamento.getDescricao())
-				.valor(lancamento.getValor())
-				.mes(lancamento.getMes())
-				.ano(lancamento.getAno())
-				.status(lancamento.getStatus().name())
-				.tipo(lancamento.getTipo().name())
-				.usuario(lancamento.getUsuario().getId())
-				.build();
-	}
-
-	private Lancamento converter(LancamentoDTO dto) {
-		Lancamento lancamento = new Lancamento();
-		lancamento.setId(dto.getId());
-		lancamento.setDescricao(dto.getDescricao());
-		lancamento.setAno(dto.getAno());
-		lancamento.setMes(dto.getMes());
-		lancamento.setValor(dto.getValor());
-
-		
-		Usuario usuario = usuarioService
-			.obterPorId(dto.getUsuario())
-			.orElseThrow(() -> new RegraNegocioException("Usuario não encontrado para o id informado"));
-
-		lancamento.setUsuario(usuario);
-		
-		if(dto.getTipo() != null) {
-			lancamento.setTipo(TipoLancamento.valueOf(dto.getTipo()));
-		}
-		
-		if(dto.getStatus() != null) {
-			lancamento.setStatus(StatusLancamento.valueOf(dto.getStatus()));
-		}
-
-		return lancamento;
-	}
+//	private Lancamento converter(LancamentoDTO dto) {
+//		Lancamento lancamento = new Lancamento();
+//		lancamento.setId(dto.getId());
+//		lancamento.setDescricao(dto.getDescricao());
+//		lancamento.setAno(dto.getAno());
+//		lancamento.setMes(dto.getMes());
+//		lancamento.setValor(dto.getValor());
+//
+//
+//		Usuario usuario = usuarioService
+//			.obterPorId(dto.getUsuario())
+//			.orElseThrow(() -> new RegraNegocioException("Usuario não encontrado para o id informado"));
+//
+//		lancamento.setUsuario(usuario);
+//
+//		if(dto.getTipo() != null) {
+//			lancamento.setTipo(TipoLancamento.valueOf(dto.getTipo()));
+//		}
+//
+//		if(dto.getStatus() != null) {
+//			lancamento.setStatus(StatusLancamento.valueOf(dto.getStatus()));
+//		}
+//
+//		return lancamento;
+//	}
 
 }
