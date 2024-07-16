@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import br.com.xlcode.controlli.api.mapper.LancamentoMapper;
-import io.swagger.annotations.Api;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -124,31 +123,5 @@ public class LancamentoResource {
 		}).orElseGet( () -> 
 		new ResponseEntity("Lancamento não encontrado na base de daods.", HttpStatus.BAD_REQUEST ));
 	}
-
-//	private Lancamento converter(LancamentoDTO dto) {
-//		Lancamento lancamento = new Lancamento();
-//		lancamento.setId(dto.getId());
-//		lancamento.setDescricao(dto.getDescricao());
-//		lancamento.setAno(dto.getAno());
-//		lancamento.setMes(dto.getMes());
-//		lancamento.setValor(dto.getValor());
-//
-//
-//		Usuario usuario = usuarioService
-//			.obterPorId(dto.getUsuario())
-//			.orElseThrow(() -> new RegraNegocioException("Usuario não encontrado para o id informado"));
-//
-//		lancamento.setUsuario(usuario);
-//
-//		if(dto.getTipo() != null) {
-//			lancamento.setTipo(TipoLancamento.valueOf(dto.getTipo()));
-//		}
-//
-//		if(dto.getStatus() != null) {
-//			lancamento.setStatus(StatusLancamento.valueOf(dto.getStatus()));
-//		}
-//
-//		return lancamento;
-//	}
 
 }
