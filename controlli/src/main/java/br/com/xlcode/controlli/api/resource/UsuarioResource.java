@@ -3,6 +3,8 @@ package br.com.xlcode.controlli.api.resource;
 import java.math.BigDecimal;
 import java.util.Optional;
 
+import br.com.xlcode.controlli.api.dto.TokenDTO;
+import br.com.xlcode.controlli.service.JwtService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
@@ -30,13 +32,16 @@ public class UsuarioResource {
 	
 	private final UsuarioService service;
 	private final LancamentoService lancamentoService;
+	private final JwtService jwtService;
 
 	@ApiOperation(value = "Autenticar usuário")
 	@PostMapping("/autenticar")
-	public ResponseEntity autenticar (@RequestBody UsuarioDto dto) {
+	public ResponseEntity<?> autenticar (@RequestBody UsuarioDto dto) {
 		try {
 			Usuario usuarioAutenticado = service.autenticar(dto.getEmail(), dto.getSenha());
-			return ResponseEntity.ok(usuarioAutenticado);
+			String token = jwtService.gerarToken(usuarioAutenticado);
+			TokenDTO tokenDTO = new TokenDTO(usuarioAutenticado.getNome(), token);
+			return ResponseEntity.ok(tokenDTO);
 		} catch(ErroAutenticacao e ) {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
