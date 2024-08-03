@@ -51,7 +51,7 @@ public class JwtServiceImpl implements JwtService {
         return Jwts
                 .parser()
                 .setSigningKey(chaveAssinatura)
-                .parseClaimsJwt(token)
+                .parseClaimsJws(token)
                 .getBody();
     }
 
